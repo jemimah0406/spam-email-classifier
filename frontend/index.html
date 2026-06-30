@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spam Email Classifier</title>
+
+    <style>
+        body{
+            margin:0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .container{
+            background:white;
+            width:550px;
+            padding:30px;
+            border-radius:20px;
+            text-align:center;
+            box-shadow:0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        h1{
+            color:#5a3ec8;
+            margin-bottom:20px;
+        }
+
+        textarea{
+            width:95%;
+            height:150px;
+            border:2px solid #ddd;
+            border-radius:12px;
+            padding:12px;
+            font-size:16px;
+            resize:none;
+        }
+
+        textarea:focus{
+            outline:none;
+            border-color:#667eea;
+        }
+
+        button{
+            margin-top:20px;
+            background:linear-gradient(90deg,#667eea,#764ba2);
+            color:white;
+            border:none;
+            padding:12px 25px;
+            font-size:18px;
+            border-radius:10px;
+            cursor:pointer;
+            transition:0.3s;
+        }
+
+        button:hover{
+            transform:scale(1.05);
+        }
+
+        #result{
+            margin-top:25px;
+            padding:15px;
+            border-radius:10px;
+            font-size:22px;
+            font-weight:bold;
+        }
+
+        .footer{
+            margin-top:15px;
+            color:#777;
+            font-size:14px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>📧 AI Spam Email Classifier</h1>
+
+    <textarea
+        id="message"
+        placeholder="Type your email or SMS here..."
+    ></textarea>
+
+    <br>
+
+    <button onclick="checkSpam()">🚀 Check Spam</button>
+
+    <div id="result"></div>
+
+    <div class="footer">
+        Machine Learning Project
+    </div>
+</div>
+
+<script>
+function checkSpam() {
+
+    let message = document.getElementById("message").value;
+
+    fetch("http://127.0.0.1:5000/predict", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            text: message
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        let result = document.getElementById("result");
+
+        result.innerHTML =
+            "📊 Prediction: " + data.prediction +
+            "<br>🎯 Confidence: " + data.confidence + "%";
+
+        if(String(data.prediction).toLowerCase().includes("spam")){
+            result.style.background = "#ffdddd";
+            result.style.color = "#d8000c";
+        }
+        else{
+            result.style.background = "#ddffdd";
+            result.style.color = "#2e7d32";
+        }
+    })
+    .catch(error => {
+        document.getElementById("result").innerHTML =
+            "❌ Error connecting to backend";
+    });
+}
+</script>
+
+</body>
+</html>

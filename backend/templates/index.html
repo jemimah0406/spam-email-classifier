@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Spam Email Classifier</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            text-align: center;
+            margin-top: 80px;
+        }
+
+        input {
+            width: 300px;
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>📧 Spam Email Classifier</h1>
+
+    <input type="text" id="emailInput" placeholder="Enter email text">
+    <button onclick="checkEmail()">Check</button>
+
+    <div id="result"></div>
+
+    <!-- ✅ JAVASCRIPT GOES HERE (BOTTOM OF PAGE) -->
+    <script>
+        async function checkEmail() {
+            let emailText = document.getElementById("emailInput").value;
+            let resultBox = document.getElementById("result");
+
+            resultBox.innerHTML = "⏳ Checking...";
+
+            let response = await fetch("http://127.0.0.1:5000/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ text: emailText })
+            });
+
+            let data = await response.json();
+
+            resultBox.innerHTML =
+                (data.prediction === "SPAM"
+                    ? "🚨 SPAM DETECTED!"
+                    : "✅ NOT SPAM")
+                + "<br><small>Confidence: " + data.confidence + "%</small>";
+        }
+    </script>
+
+</body>
+</html>
